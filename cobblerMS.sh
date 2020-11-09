@@ -3,7 +3,7 @@
 function install {
 echo "---------------------------------------------------------------"
 echo "welcome to use cobbler one setup install porgamme ver 0.26(beta)"
-echo "author:tiny-wolf time: 2020.10.10 11:37:49"
+echo "author:sddkwolf time:2020年10月10日11:37:38"
 echo "---------------------------------------------------------------"
 echo "*"
 echo "*"
@@ -17,8 +17,8 @@ echo -e '\n'
 
 read -r -p "This step may will stop your firewalld and selinux service are you contiune? [Y/n]" input
     case $input in
-	    [yY][eE][sS]|[yY])
-	 clear
+        [yY][eE][sS]|[yY])
+     clear
    systemctl stop firewalld  #stop the firewall and selinux
    systemctl disable firewalld
    setenforce 0
@@ -77,14 +77,14 @@ echo "how to edit ? visit this web ...."
 exit 1
 ;;
 [nN][oO]|[nN])
-			echo "Exit install script"
-			exit 1
-			;;
+            echo "Exit install script"
+            exit 1
+            ;;
 
-	    *)
-			echo "Invalid input..."
-			;;
-	esac
+        *)
+            echo "Invalid input..."
+            ;;
+    esac
 }
 
 function image_add {
@@ -112,19 +112,19 @@ read -r -p "Display image information and profile image? [Y/n] " input
 
 case $input in
     [yY][eE][sS]|[yY])
-		cobbler distro report --name=$name_installation-$cpu_architecture
-		cobbler profile report --name=$name_installation-$cpu_architecture
-		;;
+        cobbler distro report --name=$name_installation-$cpu_architecture
+        cobbler profile report --name=$name_installation-$cpu_architecture
+        ;;
 
     [nN][oO]|[nN])
-		echo "Bye"
-		  exit
-       	;;
+        echo "Bye"
+          exit
+           ;;
 
     *)
-		echo "Invalid input..."
-		exit 1
-		;;
+        echo "Invalid input..."
+        exit 1
+        ;;
 esac
 }
 ##############################################
@@ -148,7 +148,7 @@ function show_profile {
     read  pro_list
     cobbler profile report $pro_list
 }
-##############################################
+##############################################delete_profile
 function delete_profile {
     clear
     echo "-------Which mirror do you want to delete?-------"
@@ -158,7 +158,29 @@ function delete_profile {
     read  pro_list_d
     cobbler profile remove --name=$pro_list_d
 }
-##############################################
+##############################################update_Scripts
+function update_Scripts {
+
+read -r -p "Are You Sure Update Scripts? [Y/n] " input
+case $input in
+    [yY][eE][sS]|[yY])
+		echo "Downloading..."
+		wget http://litterdevice.top:8000/image/cobblerMS.sh -O cobblerMS.sh
+		;;
+
+    [nN][oO]|[nN])
+    echo "Quit The Scripts"
+		exit 1
+       	;;
+    *)
+		echo "Invalid input..."
+		exit 1
+		;;
+esac
+}
+
+
+
 
 function menu {
 clear
@@ -171,6 +193,7 @@ echo -e "\t\t\t2. add image to cobbler"
 echo -e "\t\t\t3. delete image to cobbler"
 echo -e "\t\t\t4. show profile message"
 echo -e "\t\t\t5. change passwd"
+echo -e "\t\t\t6. update scripts"
 echo "  "
 echo -en "\t\t\tEnter option Ctrl+C to exit:"
 echo "  "
@@ -202,7 +225,9 @@ do
     4)
         show_profile ;;
     5)
-         passwd_change;;
+        passwd_change;;
+    6)
+        update_Scripts;;
     *)
         clear
         echo "sorry,wrong selection" ;;
