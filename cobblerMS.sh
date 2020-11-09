@@ -2,7 +2,7 @@
 
 function install {
 echo "---------------------------------------------------------------"
-echo "welcome to use cobbler one setup install porgamme ver 0.26(beta)"
+echo "welcome to use cobbler one setup install porgamme ver 0.27(beta)"
 echo "author:sddkwolf time:2020年11月19日11:32:21"
 echo "---------------------------------------------------------------"
 echo "*"
