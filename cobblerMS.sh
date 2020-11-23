@@ -3,7 +3,7 @@
 function install {
 echo "---------------------------------------------------------------"
 echo "welcome to use cobbler one setup install porgamme ver 0.27(beta)"
-echo "author:sddkwolf time:2020年11月19日11:32:21"
+echo "author:sddkwolf time:2020-11-23 15:16:59"
 echo "---------------------------------------------------------------"
 echo "*"
 echo "*"
@@ -178,10 +178,31 @@ case $input in
 		;;
 esac
 }
+################################################uinstall_cobbler
+function uinstall {
 
 
+read -r -p "Are You Sure Uinstall cobbler? [Y/n] " input
+case $input in
+    [yY][eE][sS]|[yY])
+		echo "Uinstall....."
+		yum -y remove cobbler cobbler-web tftp-server dhcp httpd xinetd fence-agents pykickstart
+		rm -rf /cobbler_dir
+		;;
+
+    [nN][oO]|[nN])
+    echo "Quit The Scripts"
+		exit 1
+       	;;
+    *)
+		echo "Invalid input..."
+		exit 1
+		;;
+esac
+}
 
 
+###############################################function menu
 function menu {
 clear
 echo
@@ -194,6 +215,7 @@ echo -e "\t\t\t3. delete image to cobbler"
 echo -e "\t\t\t4. show profile message"
 echo -e "\t\t\t5. change passwd"
 echo -e "\t\t\t6. update scripts"
+echo -e "\t\t\t7. uinstall cobbler"
 echo "  "
 echo -en "\t\t\tEnter option Ctrl+C to exit:"
 echo "  "
@@ -225,9 +247,11 @@ do
     4)
         show_profile ;;
     5)
-        passwd_change;;
+        passwd_change ;;
     6)
-        update_Scripts;;
+        update_Scripts ;;
+    7)
+        uinstall ;;
     *)
         clear
         echo "sorry,wrong selection" ;;
