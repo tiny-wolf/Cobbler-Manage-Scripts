@@ -135,7 +135,8 @@ echo "please enter your root password(default_password_crypted)"
    openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd'
 echo "please enter salt password"
    read salt_password
-   cobbler setting edit --name=default_password_crypted --value='$salt_password'
+   sed -i 's%^default_password_crypted.*%default_password_crypted: "$salt_password"%g' /etc/cobbler/settings
+   systemctl restart cobblerd
 echo "ok...."
 }
 ##############################################
