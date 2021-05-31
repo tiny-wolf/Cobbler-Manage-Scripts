@@ -151,6 +151,7 @@ function show_profile {
 }
 ##############################################delete_profile
 function delete_profile {
+
     clear
     echo "-------Which mirror do you want to delete?-------"
     cobbler profile list
@@ -162,6 +163,7 @@ function delete_profile {
 ##############################################update_Scripts
 function update_Scripts {
 
+   clear
 read -r -p "Are You Sure Update Scripts? [Y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
@@ -182,7 +184,7 @@ esac
 ################################################uinstall_cobbler
 function uinstall {
 
-
+   clear
 read -r -p "Are You Sure Uinstall cobbler? [Y/n] " input
 case $input in
     [yY][eE][sS]|[yY])
