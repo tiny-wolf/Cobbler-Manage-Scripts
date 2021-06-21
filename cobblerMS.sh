@@ -2,8 +2,8 @@
 
 function install {
 echo "---------------------------------------------------------------"
-echo "welcome to use cobbler one setup install porgamme ver 0.27(beta)"
-echo "author:sddkwolf time:2020-11-23 15:16:59"
+echo "welcome to use cobbler one setup install porgamme ver 0.28(beta)"
+echo "author:sddkwolf time:2021-6-21 15:16:59"
 echo "---------------------------------------------------------------"
 echo "*"
 echo "*"
@@ -63,10 +63,8 @@ echo "--------------------------------------------------------------------------
 ################################## salt_passwd_setting
 echo "please enter your root password(default_password_crypted)"
    read root_pwd
-   openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd'
-echo "please enter salt password"
-   read salt_password
-   cobbler setting edit --name=default_password_crypted --value='$salt_password'
+   root_pwd_result=$(openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd')
+   cobbler setting edit --name=default_password_crypted --value='$root_pwd_result'
 echo "ok....please stand by"
 ################################## dhcp_setting
    yum -y install fence-agents
@@ -131,12 +129,11 @@ esac
 function passwd_change {
 clear
 echo "please enter your root password(default_password_crypted)"
-   read root_pwd
-   openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd'
-echo "please enter salt password"
-   read salt_password
-   sed -i 's%^default_password_crypted.*%default_password_crypted: "$salt_password"%g' /etc/cobbler/settings
+   read root_pwd_change
+   root_pwd_change_result=$(openssl passwd -1 -salt `openssl rand -hex 4` 'jimmyai1')
+   sed -i 's%^default_password_crypted.*%default_password_crypted: '${root_pwd_change}'%g' /etc/cobbler/settings
    systemctl restart cobblerd
+   systemctl restart dhcpd
 echo "ok...."
 }
 ##############################################
