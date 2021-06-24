@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 function install {
+clear
 echo "---------------------------------------------------------------"
-echo "welcome to use cobbler one setup install porgamme ver 0.28(beta)"
-echo "author:sddkwolf time:2021-6-21 15:16:59"
+echo "welcome to use cobbler one setup install porgamme ver 0.30(beta)"
+echo "author:sddkwolf time:2021-6-24 15:44:23"
 echo "---------------------------------------------------------------"
 echo "*"
 echo "*"
@@ -25,8 +26,6 @@ read -r -p "This step may will stop your firewalld and selinux service are you c
    sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux
 #################################################################### change source
    yum install wget -y
-   wget git.io/superupdate.sh
-   chmod +x git.io/superupdate.sh
    yum update -y
 #################################################################### mkdir
    mkdir  /cobbler_dir
@@ -39,23 +38,35 @@ read -r -p "This step may will stop your firewalld and selinux service are you c
    systemctl enable httpd cobblerd
    sed -ri '/allow_dynamic_settings:/c\allow_dynamic_settings: 1' /etc/cobbler/settings
    systemctl restart cobblerd
+   cobbler get-loaders
 #################################################################### setting
 echo "Please enter your server value(IPV4)"
    read server_value
    cobbler setting edit --name=server --value=$server_value
 echo  "Please enter your next_server value(IPV4)"
    read next_server_value
-   cobbler setting edit --name=next_server --value=192.168.2.128
+   cobbler setting edit --name=next_server --value=$next_server_value
 #############   tftp_server setting
 sed -ri '/disable/c\disable = no' /etc/xinetd.d/tftp
    systemctl start xinetd
    systemctl enable xinetd
    systemctl restart xinetd
-echo "--------------------------------------------------------------------------------------------------------"
-echo "basic setting complete the next step is cobbler get-loaders maybe use much time"
-echo "if process is not responding please press Ctrl+c to stop this script and run cobbler get-loaders again"
-echo "the cobbler get-loaders executes successful rerun this script"
-echo "--------------------------------------------------------------------------------------------------------"
+   systemctl start tftp
+   systemctl enable tftp
+   systemctl restart tftp  
+   systemctl start dhcpd
+   systemctl enable dhcpd
+   systemctl restart dhcpd
+# ———————————————— older support
+   yum -y install grub2-efi-x64-modules
+   yum -y install grub2-pc-modules
+   yum -y install unzip
+   wget https://github.com/tiny-wolf/Cobbler-Manage-Scripts/raw/main/cobbler-old.zip -O /var/lib/cobbler/loaders/cobbler-old.zip
+   unzip -od /var/lib/cobbler/loaders/ /var/lib/cobbler/loaders/cobbler-old.zip
+   rm -rf /var/lib/cobbler/loaders/cobbler-old.zip
+   ln -s /var/lib/cobbler/loaders/grub /usr/lib/grub/i386-pc/
+   ln -s /var/lib/cobbler/loaders/grub /usr/lib/grub/x86_64-efi/
+# ————————————————
    cobbler get-loaders
    systemctl start rsyncd
    systemctl enable rsyncd
@@ -128,12 +139,9 @@ esac
 ##############################################
 function passwd_change {
 clear
-echo "please enter your root password(default_password_crypted)"
-   read root_pwd_change
-   root_pwd_change_result=$(openssl passwd -1 -salt `openssl rand -hex 4` 'jimmyai1')
-   sed -i 's%^default_password_crypted.*%default_password_crypted: '${root_pwd_change}'%g' /etc/cobbler/settings
-   systemctl restart cobblerd
-   systemctl restart dhcpd
+   read root_pwd
+   root_pwd_result=$(openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd')
+   cobbler setting edit --name=default_password_crypted --value='$root_pwd_result'
 echo "ok...."
 }
 ##############################################
@@ -187,6 +195,7 @@ case $input in
     [yY][eE][sS]|[yY])
 		echo "Uinstall....."
 		yum -y remove cobbler cobbler-web tftp-server dhcp httpd xinetd fence-agents pykickstart
+		umonut /cobbler_dir/*
 		rm -rf /cobbler_dir
 		;;
 
