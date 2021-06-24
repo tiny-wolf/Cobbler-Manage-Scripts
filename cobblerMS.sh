@@ -139,6 +139,7 @@ esac
 ##############################################
 function passwd_change {
 clear
+   echo "please type your password"
    read root_pwd
    root_pwd_result=$(openssl passwd -1 -salt `openssl rand -hex 4` '$root_pwd')
    cobbler setting edit --name=default_password_crypted --value='$root_pwd_result'
